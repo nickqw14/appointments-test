@@ -1,0 +1,21 @@
+.input {
+	width: 295px;
+	height: 40px;
+	font-size: 20px;
+	color: #9a9a9a;
+	border: none;
+	border: 1pt solid #e2e2e2;
+}
+::-webkit-input-placeholder {
+	/* Edge */
+	color: #9a9a9a;
+}
+
+:-ms-input-placeholder {
+	/* Internet Explorer 10-11 */
+	color: #9a9a9a;
+}
+
+::placeholder {
+	color: #9a9a9a;
+}
