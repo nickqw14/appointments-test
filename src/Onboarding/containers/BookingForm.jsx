@@ -1,5 +1,10 @@
 import React from "react";
 
-const BookingForm = () => <div>Booking Form</div>;
+const BookingForm = ({ location }) => {
+	const getUser = () => {
+		console.log(location.state.user);
+	};
+	return <button onClick={getUser}>Click</button>;
+};
 
 export default BookingForm;

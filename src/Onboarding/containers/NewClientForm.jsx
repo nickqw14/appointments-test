@@ -21,6 +21,7 @@ const CREATE_CLIENT = gql`
 			returning {
 				id
 				first_name
+				email
 			}
 		}
 	}
@@ -30,6 +31,13 @@ const NewClientForm = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [bookAppointment, setBookAppointment] = useState(false);
+	const [userInfo, setUserInfo] = useState({
+		user: {
+			first_name: "",
+			email: "",
+			id: ""
+		}
+	});
 
 	const handleFullName = e => {
 		setName(e);
@@ -37,11 +45,26 @@ const NewClientForm = () => {
 	const handleEmail = e => {
 		setEmail(e);
 	};
+	const handleMutationCallBack = (bookNow, userInfo) => {
+		setBookAppointment(bookNow);
+		const { first_name, email, id } = userInfo[0];
+		setUserInfo({
+			user: {
+				first_name,
+				email,
+				id
+			}
+		});
+	};
 
 	const [
 		createClient,
 		{ loading: mutationLoading, error: mutationError, data }
-	] = useMutation(CREATE_CLIENT);
+	] = useMutation(CREATE_CLIENT, {
+		onCompleted(data) {
+			handleMutationCallBack(true, data.insert_clients.returning);
+		}
+	});
 
 	return (
 		<div className={styles.container}>
@@ -55,8 +78,7 @@ const NewClientForm = () => {
 							first_name: name.split(" ").shift(),
 							last_name: name.split(" ").pop(),
 							email: email
-						},
-						onCompleted: setBookAppointment(true)
+						}
 					});
 				}}
 			>
@@ -78,11 +100,12 @@ const NewClientForm = () => {
 			{mutationLoading && <p>Loading...</p>}
 			{mutationError && <p>{mutationError.message}}</p>}
 			{bookAppointment === true && mutationLoading === false ? (
-				// Put a react router link here to allow user to book appointment ?
-				// But must be able to access the mutation response
-				// Might need to set the mutation res to state and access via context
-				// Look into useEffect, this may be the best method instead of the callback method useMutation uses
-				<Link to="booking-form">
+				<Link
+					to={{
+						pathname: "/booking-form",
+						state: userInfo
+					}}
+				>
 					<button>Book Now!</button>
 				</Link>
 			) : null}
